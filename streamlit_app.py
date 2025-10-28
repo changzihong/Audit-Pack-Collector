@@ -23,19 +23,24 @@ def go_to(page_name):
 st.markdown(
     """
     <style>
+        /* Remove white gap above content */
+        .block-container {
+            padding-top: 0rem !important;
+        }
+
         /* Whole app background */
         [data-testid="stAppViewContainer"] {
             background: linear-gradient(160deg, #f8faff 0%, #eef3ff 50%, #f4f7ff 100%);
             background-attachment: fixed;
         }
 
-        /* Main content container (white card) */
+        /* White card container for content */
         .main-container {
             background-color: white;
             padding: 2rem 3rem;
             border-radius: 18px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 2rem;
+            margin-top: 0; /* remove top margin */
             margin-left: auto;
             margin-right: auto;
             width: 85%;
@@ -44,16 +49,17 @@ st.markdown(
         /* Navbar container */
         .navbar {
             background-color: white;
-            padding: 1rem 1.2rem;
+            padding: 1rem 1.2rem 0.8rem 1.2rem;
             border-bottom: 1px solid #e5e5e5;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
             text-align: center;
+            margin-bottom: 0;
         }
 
-        /* App title */
+        /* App title in navbar */
         .nav-title {
             color: #0d6efd;
             font-weight: 700;
@@ -61,7 +67,7 @@ st.markdown(
             margin-bottom: 0.4rem;
         }
 
-        /* Buttons */
+        /* Navbar buttons */
         div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
             background-color: transparent !important;
             color: #0d6efd !important;
@@ -73,16 +79,11 @@ st.markdown(
             padding: 0.4rem 1rem;
         }
 
-        /* Hover effect */
+        /* Hover animation */
         div[data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
             transform: scale(1.05);
             background-color: rgba(13, 110, 253, 0.06) !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-
-        /* Reduce default padding */
-        .block-container {
-            padding-top: 0rem;
         }
     </style>
     """,
@@ -91,7 +92,7 @@ st.markdown(
 
 
 # ---------------------------
-# NAVIGATION BAR (Centered)
+# NAVIGATION BAR
 # ---------------------------
 def navigation_bar():
     st.markdown(
@@ -139,9 +140,6 @@ if "audit_items" not in st.session_state:
 # MAIN LAYOUT
 # ---------------------------
 navigation_bar()
-st.markdown("---")
-
-# Wrap content in card
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 
@@ -230,3 +228,5 @@ elif st.session_state["page"] == "SignUp":
                 st.error("Passwords do not match.")
             else:
                 st.success("✅ Account created (demo only — backend not connected).")
+
+st.markdown('</div>', unsafe_allow_html=True)
