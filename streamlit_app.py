@@ -8,69 +8,74 @@ from datetime import datetime
 st.set_page_config(page_title="Audit Pack Collector", layout="wide")
 
 # ---------------------------
-# NAVIGATION SETUP
+# SESSION STATE SETUP
 # ---------------------------
-def set_page(page_name):
-    st.session_state["page"] = page_name
-
 if "page" not in st.session_state:
     st.session_state["page"] = "Home"
 
-# ---------------------------
-# NAVBAR
-# ---------------------------
-st.markdown(
-    """
-    <style>
-    .navbar {
-        background-color: #0d6efd;
-        padding: 10px 20px;
-        border-radius: 6px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .nav-links a {
-        color: white;
-        margin: 0 10px;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .nav-links a:hover {
-        text-decoration: underline;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="navbar">
-        <div class="logo" style="color:white; font-weight:bold;">📦 Audit Pack Collector</div>
-        <div class="nav-links">
-            <a href="?page=Home">Home</a>
-            <a href="?page=Upload">Upload</a>
-            <a href="?page=Dashboard">Dashboard</a>
-            <a href="?page=Login">Login</a>
-            <a href="?page=SignUp">Sign Up</a>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# Handle link clicks manually
-query_params = st.experimental_get_query_params()
-if "page" in query_params:
-    st.session_state["page"] = query_params["page"][0]
+def go_to(page_name):
+    st.session_state["page"] = page_name
 
 
 # ---------------------------
-# PAGE LOGIC
+# NAVIGATION BAR (BUTTON STYLE)
 # ---------------------------
+def navigation_bar():
+    st.markdown(
+        """
+        <style>
+            div[data-testid="stHorizontalBlock"] {
+                background-color: #0d6efd;
+                padding: 0.8rem 1.2rem;
+                border-radius: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .nav-btn {
+                background-color: white;
+                color: #0d6efd;
+                border-radius: 8px;
+                padding: 0.4rem 0.9rem;
+                border: none;
+                font-weight: 500;
+                cursor: pointer;
+            }
+            .nav-btn:hover {
+                background-color: #eaf0ff;
+            }
+            .nav-title {
+                color: white;
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-# --- Dummy data (persistent)
+    col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 1, 1, 1, 1])
+    with col1:
+        st.markdown('<div class="nav-title">📦 Audit Pack Collector</div>', unsafe_allow_html=True)
+    with col2:
+        if st.button("🏠 Home", key="home_btn", use_container_width=True):
+            go_to("Home")
+    with col3:
+        if st.button("📁 Upload", key="upload_btn", use_container_width=True):
+            go_to("Upload")
+    with col4:
+        if st.button("📊 Dashboard", key="dashboard_btn", use_container_width=True):
+            go_to("Dashboard")
+    with col5:
+        if st.button("🔐 Login", key="login_btn", use_container_width=True):
+            go_to("Login")
+    with col6:
+        if st.button("🧾 Sign Up", key="signup_btn", use_container_width=True):
+            go_to("SignUp")
+
+# ---------------------------
+# DUMMY DATA
+# ---------------------------
 if "audit_items" not in st.session_state:
     st.session_state.audit_items = pd.DataFrame({
         "Department": ["HR", "Finance", "IT", "Operations"],
@@ -80,31 +85,35 @@ if "audit_items" not in st.session_state:
     })
 
 # ---------------------------
-# HOME PAGE
+# RENDER NAVBAR
 # ---------------------------
+navigation_bar()
+st.write("")  # small spacer
+
+
+# ---------------------------
+# PAGE CONTENT
+# ---------------------------
+
+# HOME PAGE
 if st.session_state["page"] == "Home":
     st.markdown("## 👋 Welcome to Audit Pack Collector")
     st.write(
         """
-        This tool helps HR and Compliance teams collect, track, and manage all required audit documents efficiently.
-
-        **Features:**
-        - Centralized audit checklist  
-        - Real-time progress tracking  
-        - Smart reminders & file uploads  
-        - Ready for Supabase integration  
+        This platform helps HR and Compliance teams easily track and collect all required audit documents from each department.  
+        
+        **Key Features**
+        - 📋 Centralized checklist  
+        - 📁 File upload & tracking  
+        - 📊 Real-time progress dashboard  
+        - 🔐 Login and role-based access  
         """
     )
-    st.image(
-        "https://cdn-icons-png.flaticon.com/512/2991/2991106.png",
-        width=200,
-    )
-    st.info("Use the navigation bar above to explore Upload, Dashboard, or Login/Sign Up pages.")
+    st.image("https://cdn-icons-png.flaticon.com/512/2991/2991106.png", width=200)
+    st.info("Use the navigation bar above to explore different pages.")
 
 
-# ---------------------------
 # UPLOAD PAGE
-# ---------------------------
 elif st.session_state["page"] == "Upload":
     st.header("📁 Upload Audit Evidence")
 
@@ -121,9 +130,7 @@ elif st.session_state["page"] == "Upload":
         st.session_state.audit_items.loc[idx, "Status"] = "Completed"
         st.session_state.audit_items.loc[idx, "Last Updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-# ---------------------------
 # DASHBOARD PAGE
-# ---------------------------
 elif st.session_state["page"] == "Dashboard":
     st.header("📊 Audit Dashboard")
 
@@ -144,9 +151,8 @@ elif st.session_state["page"] == "Dashboard":
     st.divider()
     st.caption("💡 This dashboard updates automatically when uploads are completed.")
 
-# ---------------------------
+
 # LOGIN PAGE
-# ---------------------------
 elif st.session_state["page"] == "Login":
     st.header("🔐 Login")
 
@@ -158,9 +164,8 @@ elif st.session_state["page"] == "Login":
         if submitted:
             st.success("✅ Logged in (demo only — no backend yet).")
 
-# ---------------------------
-# SIGNUP PAGE
-# ---------------------------
+
+# SIGN UP PAGE
 elif st.session_state["page"] == "SignUp":
     st.header("🧾 Create an Account")
 
