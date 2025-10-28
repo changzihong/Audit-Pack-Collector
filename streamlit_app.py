@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Audit Pack Collector", layout="wide")
 
 # ---------------------------
-# SESSION STATE
+# SESSION STATE SETUP
 # ---------------------------
 if "page" not in st.session_state:
     st.session_state["page"] = "Home"
@@ -18,70 +18,78 @@ def go_to(page_name):
 
 
 # ---------------------------
+# CUSTOM STYLES
+# ---------------------------
+st.markdown(
+    """
+    <style>
+        /* NAVBAR BASE */
+        .navbar {
+            background-color: white;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .nav-title {
+            color: #0d6efd;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* NAV BUTTON STYLE */
+        div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
+            background-color: transparent !important;
+            color: #0d6efd !important;
+            border: none !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        div[data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
+            transform: scale(1.05);
+            background-color: rgba(13, 110, 253, 0.05) !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* Remove top padding for full-screen look */
+        .block-container {
+            padding-top: 0rem;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# ---------------------------
 # NAVIGATION BAR
 # ---------------------------
 def navigation_bar():
-    st.markdown(
-        """
-        <style>
-            .navbar {
-                background-color: white;
-                padding: 0.8rem 1.2rem;
-                border-bottom: 1px solid #e5e5e5;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                position: sticky;
-                top: 0;
-                z-index: 999;
-            }
-            .nav-title {
-                color: #0d6efd;
-                font-weight: 700;
-                font-size: 1.2rem;
-            }
-            .nav-btn {
-                background: none;
-                color: #0d6efd;
-                border: none;
-                font-weight: 500;
-                font-size: 0.95rem;
-                margin-left: 0.5rem;
-                cursor: pointer;
-                transition: all 0.2s ease-in-out;
-                border-radius: 6px;
-                padding: 0.4rem 0.9rem;
-            }
-            .nav-btn:hover {
-                transform: scale(1.05);
-                background-color: rgba(13, 110, 253, 0.05);
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            }
-        </style>
+    st.markdown('<div class="navbar"><div class="nav-title">📦 Audit Pack Collector</div></div>', unsafe_allow_html=True)
+    cols = st.columns([1, 1, 1, 1, 1, 4])
+    with cols[0]:
+        if st.button("🏠 Home", key="home_btn"):
+            go_to("Home")
+    with cols[1]:
+        if st.button("📁 Upload", key="upload_btn"):
+            go_to("Upload")
+    with cols[2]:
+        if st.button("📊 Dashboard", key="dashboard_btn"):
+            go_to("Dashboard")
+    with cols[3]:
+        if st.button("🔐 Login", key="login_btn"):
+            go_to("Login")
+    with cols[4]:
+        if st.button("🧾 Sign Up", key="signup_btn"):
+            go_to("SignUp")
 
-        <div class="navbar">
-            <div class="nav-title">📦 Audit Pack Collector</div>
-            <div>
-                <form action="#" method="get" style="display:inline;">
-                    <button class="nav-btn" type="submit" formaction="?page=Home">🏠 Home</button>
-                    <button class="nav-btn" type="submit" formaction="?page=Upload">📁 Upload</button>
-                    <button class="nav-btn" type="submit" formaction="?page=Dashboard">📊 Dashboard</button>
-                    <button class="nav-btn" type="submit" formaction="?page=Login">🔐 Login</button>
-                    <button class="nav-btn" type="submit" formaction="?page=SignUp">🧾 Sign Up</button>
-                </form>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# ---------------------------
-# URL HANDLING (simulate navigation)
-# ---------------------------
-query_params = st.query_params
-if "page" in query_params:
-    st.session_state["page"] = query_params["page"]
 
 # ---------------------------
 # DUMMY DATA
@@ -94,15 +102,16 @@ if "audit_items" not in st.session_state:
         "Last Updated": ["", "", "", ""],
     })
 
+
 # ---------------------------
-# RENDER NAVBAR
+# MAIN LAYOUT
 # ---------------------------
 navigation_bar()
-st.write("")
+st.markdown("---")  # separator under navbar
 
 
 # ---------------------------
-# PAGE CONTENTS
+# PAGE CONTENT
 # ---------------------------
 
 # HOME PAGE
@@ -110,17 +119,17 @@ if st.session_state["page"] == "Home":
     st.markdown("## 👋 Welcome to Audit Pack Collector")
     st.write(
         """
-        A lightweight audit document collection dashboard for HR and Compliance teams.
+        A simple audit document collection dashboard for HR and Compliance teams.
         
         **Features**
-        - Centralized checklist  
-        - File uploads with status tracking  
-        - Real-time dashboard  
-        - Secure login system (coming soon)
+        - 📋 Centralized audit checklist  
+        - 📁 Upload evidence & track completion  
+        - 📊 Real-time progress dashboard  
+        - 🔐 Login and access control (coming soon)
         """
     )
     st.image("https://cdn-icons-png.flaticon.com/512/2991/2991106.png", width=200)
-    st.info("Use the navigation bar to explore other sections.")
+    st.info("Use the navigation bar above to explore other pages.")
 
 
 # UPLOAD PAGE
