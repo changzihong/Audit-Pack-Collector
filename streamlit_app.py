@@ -230,7 +230,3 @@ elif st.session_state["page"] == "SignUp":
                 st.error("Passwords do not match.")
             else:
                 st.success("✅ Account created (demo only — backend not connected).")
-
-
-# End white container
-st.markdown('</div>', unsafe_allow_html=True)
