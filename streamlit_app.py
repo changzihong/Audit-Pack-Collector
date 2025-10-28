@@ -23,11 +23,30 @@ def go_to(page_name):
 st.markdown(
     """
     <style>
+        /* Whole app background */
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(160deg, #f8faff 0%, #eef3ff 50%, #f4f7ff 100%);
+            background-attachment: fixed;
+        }
+
+        /* Main content container (white card) */
+        .main-container {
+            background-color: white;
+            padding: 2rem 3rem;
+            border-radius: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+            margin-left: auto;
+            margin-right: auto;
+            width: 85%;
+        }
+
         /* Navbar container */
         .navbar {
             background-color: white;
             padding: 1rem 1.2rem;
             border-bottom: 1px solid #e5e5e5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -38,19 +57,11 @@ st.markdown(
         .nav-title {
             color: #0d6efd;
             font-weight: 700;
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+            margin-bottom: 0.4rem;
         }
 
-        /* Horizontal button container */
-        .nav-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-        }
-
-        /* Button look */
+        /* Buttons */
         div[data-testid="stHorizontalBlock"] button[kind="secondary"] {
             background-color: transparent !important;
             color: #0d6efd !important;
@@ -62,9 +73,10 @@ st.markdown(
             padding: 0.4rem 1rem;
         }
 
+        /* Hover effect */
         div[data-testid="stHorizontalBlock"] button[kind="secondary"]:hover {
             transform: scale(1.05);
-            background-color: rgba(13, 110, 253, 0.05) !important;
+            background-color: rgba(13, 110, 253, 0.06) !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
@@ -91,7 +103,6 @@ def navigation_bar():
         unsafe_allow_html=True
     )
 
-    # Center the buttons using columns
     spacer, col, spacer2 = st.columns([1, 5, 1])
     with col:
         nav_cols = st.columns(5)
@@ -128,20 +139,21 @@ if "audit_items" not in st.session_state:
 # MAIN LAYOUT
 # ---------------------------
 navigation_bar()
-st.markdown("---")  # divider under nav
+st.markdown("---")
+
+# Wrap content in card
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 
 # ---------------------------
 # PAGE CONTENT
 # ---------------------------
-
-# HOME PAGE
 if st.session_state["page"] == "Home":
     st.markdown("## 👋 Welcome to Audit Pack Collector")
     st.write(
         """
         A modern tool for HR and Compliance teams to collect and track all audit documents efficiently.
-        
+
         **Core Features**
         - 📋 Centralized audit checklist  
         - 📁 File upload & evidence tracking  
@@ -153,7 +165,6 @@ if st.session_state["page"] == "Home":
     st.info("Use the navigation bar above to switch pages.")
 
 
-# UPLOAD PAGE
 elif st.session_state["page"] == "Upload":
     st.header("📁 Upload Audit Evidence")
 
@@ -171,7 +182,6 @@ elif st.session_state["page"] == "Upload":
         st.session_state.audit_items.loc[idx, "Last Updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
 
-# DASHBOARD PAGE
 elif st.session_state["page"] == "Dashboard":
     st.header("📊 Audit Dashboard")
 
@@ -193,7 +203,6 @@ elif st.session_state["page"] == "Dashboard":
     st.caption("💡 Dashboard updates automatically when uploads are completed.")
 
 
-# LOGIN PAGE
 elif st.session_state["page"] == "Login":
     st.header("🔐 Login")
 
@@ -206,7 +215,6 @@ elif st.session_state["page"] == "Login":
             st.success("✅ Logged in (demo only — backend not connected).")
 
 
-# SIGN UP PAGE
 elif st.session_state["page"] == "SignUp":
     st.header("🧾 Create an Account")
 
@@ -222,3 +230,7 @@ elif st.session_state["page"] == "SignUp":
                 st.error("Passwords do not match.")
             else:
                 st.success("✅ Account created (demo only — backend not connected).")
+
+
+# End white container
+st.markdown('</div>', unsafe_allow_html=True)
