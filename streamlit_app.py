@@ -18,25 +18,27 @@ def go_to(page):
 
 
 # ---------------------------
-# GLOBAL STYLE
+# GLOBAL STYLES
 # ---------------------------
 st.markdown("""
 <style>
 
-/* Remove Streamlit's default top padding */
+/* Remove Streamlit's default padding */
 .block-container {
     padding-top: 0 !important;
 }
 
-/* Page background */
+/* Background */
 [data-testid="stAppViewContainer"] {
     background: #F5F5F5;
     background-attachment: fixed;
 }
 
-/* Navbar styling */
+/* ===========================
+   NAVIGATION BAR
+   =========================== */
 .navbar {
-    background-color: #000080;
+    background-color: #000080; /* Deep navy */
     padding: 1rem 1.5rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     position: sticky;
@@ -47,7 +49,7 @@ st.markdown("""
 
 /* Navbar title */
 .nav-title {
-    color: white;
+    color: #99CCFF; /* Light blue */
     font-weight: 700;
     font-size: 1.4rem;
     letter-spacing: 0.5px;
@@ -62,10 +64,10 @@ st.markdown("""
     margin-top: 0.6rem;
 }
 
-/* Default buttons */
+/* Buttons (light blue text) */
 .stButton>button {
     background-color: transparent !important;
-    color: #FFFFFF !important;
+    color: #99CCFF !important;
     border: 1px solid transparent !important;
     font-weight: 500;
     border-radius: 6px;
@@ -76,17 +78,18 @@ st.markdown("""
 /* Hover animation */
 .stButton>button:hover {
     transform: scale(1.07);
-    background-color: rgba(255,255,255,0.12) !important;
-    border-color: rgba(255,255,255,0.3) !important;
+    background-color: rgba(153, 204, 255, 0.12) !important;
+    border-color: rgba(153, 204, 255, 0.4) !important;
 }
 
-/* Active page highlight */
+/* Active page button */
 button[data-active="true"] {
-    background-color: #4CAF50 !important;
-    color: white !important;
+    background-color: #99CCFF !important;
+    color: #000080 !important;
+    font-weight: 600 !important;
 }
 
-/* Divider line below navbar */
+/* Divider under navbar */
 .nav-divider {
     height: 3px;
     background: linear-gradient(90deg, #4CAF50 0%, #FFBF00 100%);
@@ -94,7 +97,9 @@ button[data-active="true"] {
     border: none;
 }
 
-/* Main content wrapper */
+/* ===========================
+   MAIN CONTENT
+   =========================== */
 .main-wrapper {
     margin: 2rem auto;
     padding: 2rem 3rem;
@@ -109,9 +114,27 @@ h2, h3 {
     color: #000080 !important;
 }
 
-/* Metrics styling */
+/* Metric text color */
 [data-testid="stMetricValue"] {
     color: #000080;
+}
+
+/* Remove unwanted markdown container space */
+[data-testid="stMarkdownContainer"] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Hide empty main-wrapper containers */
+.element-container:has(.main-wrapper:empty),
+[data-testid="stElementContainer"]:has(.main-wrapper:empty) {
+    display: none !important;
+}
+
+/* Ensure the first section is flush with navbar */
+.main-wrapper:first-of-type {
+    margin-top: 0 !important;
+    padding-top: 1rem !important;
 }
 
 </style>
@@ -132,8 +155,13 @@ def navigation_bar():
     cols = st.columns(len(pages))
     for i, page in enumerate(pages):
         with cols[i]:
+            active = "true" if st.session_state["page"] == page else "false"
             if st.button(page, key=f"nav_{page}", use_container_width=True):
                 go_to(page)
+            st.markdown(
+                f"<script>document.querySelector('[key=\"nav_{page}\"] button').setAttribute('data-active', '{active}')</script>",
+                unsafe_allow_html=True
+            )
 
     st.markdown("""
         </div>
@@ -155,7 +183,7 @@ if "audit_items" not in st.session_state:
 
 
 # ---------------------------
-# PAGE CONTENTS
+# PAGE CONTENT
 # ---------------------------
 navigation_bar()
 
@@ -166,16 +194,16 @@ with st.container():
     if st.session_state["page"] == "Home":
         st.markdown("## 👋 Welcome to Audit Pack Collector")
         st.write("""
-        This platform helps HR and Compliance teams compile, track, and review all documents required for internal or external audits.
+        This platform helps HR and Compliance teams compile, track, and review all required audit documents efficiently.
 
-        **Key Components**
-        - **Central Repository**: All documents in one secure location  
-        - **Master Checklist**: Track required vs. collected files  
-        - **Responsibility Matrix**: Know who owns what  
-        - **Version Control**: Keep only approved versions
+        **Core Components**
+        - 🗂️ **Central Repository:** Securely store all audit files in one place  
+        - ✅ **Master Checklist:** Monitor which items are collected and reviewed  
+        - 👥 **Responsibility Matrix:** Assign owners and reviewers  
+        - 🔁 **Version Control:** Keep only final, approved files
         """)
         st.image("https://cdn-icons-png.flaticon.com/512/2991/2991106.png", width=200)
-        st.info("Navigate using the menu above to start collecting audit evidence.")
+        st.info("Use the navigation bar above to explore system modules.")
 
     # UPLOAD PAGE
     elif st.session_state["page"] == "Upload":
@@ -207,6 +235,7 @@ with st.container():
 
         st.progress(progress / 100)
         st.caption(f"✅ {progress:.0f}% of audit items completed")
+
         st.dataframe(df, use_container_width=True)
         st.caption("💡 Dashboard updates automatically when uploads are completed.")
 
