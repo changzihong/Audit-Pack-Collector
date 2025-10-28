@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Audit Pack Collector", layout="wide")
 
 # ---------------------------
-# SESSION STATE SETUP
+# SESSION STATE
 # ---------------------------
 if "page" not in st.session_state:
     st.session_state["page"] = "Home"
@@ -18,48 +18,54 @@ def go_to(page_name):
 
 
 # ---------------------------
-# CUSTOM STYLES
+# CUSTOM CSS STYLES
 # ---------------------------
 st.markdown(
     """
     <style>
-        /* Remove white gap above content */
+        /* Remove white gap between navbar and content */
         .block-container {
-            padding-top: 0rem !important;
+            padding-top: 0 !important;
         }
 
-        /* Whole app background */
+        /* Background gradient */
         [data-testid="stAppViewContainer"] {
             background: linear-gradient(160deg, #f8faff 0%, #eef3ff 50%, #f4f7ff 100%);
             background-attachment: fixed;
         }
 
-        /* White card container for content */
+        /* Main white content container */
         .main-container {
             background-color: white;
             padding: 2rem 3rem;
             border-radius: 18px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-top: 0; /* remove top margin */
+            margin-top: 0;
             margin-left: auto;
             margin-right: auto;
             width: 85%;
         }
 
-        /* Navbar container */
+        /* Navbar styling */
         .navbar {
             background-color: white;
-            padding: 1rem 1.2rem 0.8rem 1.2rem;
-            border-bottom: 1px solid #e5e5e5;
+            padding: 1rem 1.2rem 0.4rem 1.2rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
             text-align: center;
-            margin-bottom: 0;
+            border-bottom: none;
         }
 
-        /* App title in navbar */
+        /* Thin blue divider line under navbar */
+        .nav-divider {
+            height: 3px;
+            background: linear-gradient(90deg, #0d6efd 0%, #7ba7ff 100%);
+            margin: 0;
+        }
+
+        /* Navbar title */
         .nav-title {
             color: #0d6efd;
             font-weight: 700;
@@ -100,6 +106,7 @@ def navigation_bar():
         <div class="navbar">
             <div class="nav-title">📦 Audit Pack Collector</div>
         </div>
+        <div class="nav-divider"></div>
         """,
         unsafe_allow_html=True
     )
@@ -140,11 +147,13 @@ if "audit_items" not in st.session_state:
 # MAIN LAYOUT
 # ---------------------------
 navigation_bar()
+
+# White content container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
 
 # ---------------------------
-# PAGE CONTENT
+# PAGE CONTENTS
 # ---------------------------
 if st.session_state["page"] == "Home":
     st.markdown("## 👋 Welcome to Audit Pack Collector")
@@ -228,5 +237,6 @@ elif st.session_state["page"] == "SignUp":
                 st.error("Passwords do not match.")
             else:
                 st.success("✅ Account created (demo only — backend not connected).")
+
 
 st.markdown('</div>', unsafe_allow_html=True)
