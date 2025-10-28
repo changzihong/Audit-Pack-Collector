@@ -5,42 +5,39 @@ from datetime import datetime
 # ---------------------------
 # PAGE CONFIG
 # ---------------------------
-st.set_page_config(page_title="Audit Pack Collector", layout="wide")
+st.set_page_config(page_title="Audit Pack Collector", layout="wide", page_icon="📂")
 
 # ---------------------------
 # SESSION STATE
 # ---------------------------
 if "page" not in st.session_state:
-    st.session_state["page"] = "Home"
+    st.session_state["page"] = "🏠 Home"
 
 def go_to(page):
     st.session_state["page"] = page
 
 
 # ---------------------------
-# GLOBAL STYLES
+# GLOBAL STYLES (Luxury Theme)
 # ---------------------------
 st.markdown("""
 <style>
+/* Remove default padding */
+.block-container { padding-top: 0 !important; }
 
-/* Remove Streamlit's default padding */
-.block-container {
-    padding-top: 0 !important;
-}
-
-/* Background */
+/* Background gradient */
 [data-testid="stAppViewContainer"] {
-    background: #F5F5F5;
-    background-attachment: fixed;
+    background: linear-gradient(135deg, #f8f9fb 0%, #e9efff 100%);
 }
 
 /* ===========================
-   NAVIGATION BAR
+   NAVBAR
    =========================== */
 .navbar {
-    background-color: #000080; /* Deep navy */
-    padding: 1rem 1.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: linear-gradient(90deg, #001f54 0%, #003366 100%);
+    padding: 1rem 2rem;
+    border-bottom: 3px solid #FFD700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
     z-index: 999;
@@ -49,52 +46,30 @@ st.markdown("""
 
 /* Navbar title */
 .nav-title {
-    color: #99CCFF; /* Light blue */
-    font-weight: 700;
-    font-size: 1.4rem;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.4rem;
+    color: #FFD700;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: 0.6px;
 }
 
-/* Navbar buttons container */
-.nav-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 0.6rem;
-}
-
-/* Buttons (light blue text) */
+/* Nav buttons */
 .stButton>button {
-    background-color: transparent !important;
-    color: #99CCFF !important;
+    background: transparent !important;
+    color: #FFD700 !important;
     border: 1px solid transparent !important;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 6px;
     padding: 0.4rem 1rem;
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
 }
-
-/* Hover animation */
 .stButton>button:hover {
     transform: scale(1.07);
-    background-color: rgba(153, 204, 255, 0.12) !important;
-    border-color: rgba(153, 204, 255, 0.4) !important;
+    background-color: rgba(255,255,255,0.1) !important;
+    border-color: rgba(255,255,255,0.2) !important;
 }
-
-/* Active page button */
 button[data-active="true"] {
-    background-color: #99CCFF !important;
-    color: #000080 !important;
-    font-weight: 600 !important;
-}
-
-/* Divider under navbar */
-.nav-divider {
-    height: 3px;
-    background: linear-gradient(90deg, #4CAF50 0%, #FFBF00 100%);
-    margin: 0;
-    border: none;
+    background: #FFD700 !important;
+    color: #001f54 !important;
 }
 
 /* ===========================
@@ -102,41 +77,33 @@ button[data-active="true"] {
    =========================== */
 .main-wrapper {
     margin: 2rem auto;
-    padding: 2rem 3rem;
+    padding: 2.5rem 3rem;
     width: 88%;
-    background-color: #FFFFFF;
-    border-radius: 14px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
 /* Headings */
 h2, h3 {
-    color: #000080 !important;
+    color: #001f54 !important;
+}
+
+/* Progress bar */
+[data-testid="stProgressBar"] div[role="progressbar"] {
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
 }
 
 /* Metric text color */
-[data-testid="stMetricValue"] {
-    color: #000080;
-}
+[data-testid="stMetricValue"] { color: #001f54; font-weight: 700; }
 
-/* Remove unwanted markdown container space */
-[data-testid="stMarkdownContainer"] {
-    margin: 0 !important;
-    padding: 0 !important;
+/* Table */
+[data-testid="stDataFrame"] table {
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
 }
-
-/* Hide empty main-wrapper containers */
-.element-container:has(.main-wrapper:empty),
-[data-testid="stElementContainer"]:has(.main-wrapper:empty) {
-    display: none !important;
-}
-
-/* Ensure the first section is flush with navbar */
-.main-wrapper:first-of-type {
-    margin-top: 0 !important;
-    padding-top: 1rem !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -148,10 +115,10 @@ def navigation_bar():
     st.markdown("""
     <div class="navbar">
         <div class="nav-title">📂 Audit Pack Collector</div>
-        <div class="nav-buttons">
+    </div>
     """, unsafe_allow_html=True)
 
-    pages = ["Home", "Upload", "Dashboard", "Login", "SignUp"]
+    pages = ["🏠 Home", "📤 Upload", "📊 Dashboard", "🔐 Login", "🧾 SignUp"]
     cols = st.columns(len(pages))
     for i, page in enumerate(pages):
         with cols[i]:
@@ -162,12 +129,6 @@ def navigation_bar():
                 f"<script>document.querySelector('[key=\"nav_{page}\"] button').setAttribute('data-active', '{active}')</script>",
                 unsafe_allow_html=True
             )
-
-    st.markdown("""
-        </div>
-    </div>
-    <div class="nav-divider"></div>
-    """, unsafe_allow_html=True)
 
 
 # ---------------------------
@@ -191,22 +152,23 @@ with st.container():
     st.markdown('<div class="main-wrapper">', unsafe_allow_html=True)
 
     # HOME PAGE
-    if st.session_state["page"] == "Home":
+    if st.session_state["page"] == "🏠 Home":
         st.markdown("## 👋 Welcome to Audit Pack Collector")
         st.write("""
-        This platform helps HR and Compliance teams compile, track, and review all required audit documents efficiently.
+        A demo platform designed for HR and Compliance teams to efficiently manage audit documentation.  
+        Sleek, smart, and ready for enterprise — even in demo mode.
 
-        **Core Components**
-        - 🗂️ **Central Repository:** Securely store all audit files in one place  
-        - ✅ **Master Checklist:** Monitor which items are collected and reviewed  
-        - 👥 **Responsibility Matrix:** Assign owners and reviewers  
-        - 🔁 **Version Control:** Keep only final, approved files
+        **Key Highlights**
+        - 🗂️ Central Repository for all evidence  
+        - ✅ Checklist & Tracking Dashboard  
+        - 🤖 Mock AI Insights for smarter prioritization  
+        - 🧾 Simple Upload & Auto Status Update
         """)
         st.image("https://cdn-icons-png.flaticon.com/512/2991/2991106.png", width=200)
-        st.info("Use the navigation bar above to explore system modules.")
+        st.success("Use the navigation bar above to explore modules.")
 
     # UPLOAD PAGE
-    elif st.session_state["page"] == "Upload":
+    elif st.session_state["page"] == "📤 Upload":
         st.header("📁 Upload Audit Evidence")
         dept = st.selectbox("Select Department", st.session_state.audit_items["Department"])
         doc_type = st.selectbox(
@@ -221,7 +183,7 @@ with st.container():
             st.session_state.audit_items.loc[idx, "Last Updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     # DASHBOARD PAGE
-    elif st.session_state["page"] == "Dashboard":
+    elif st.session_state["page"] == "📊 Dashboard":
         st.header("📊 Audit Dashboard Overview")
         df = st.session_state.audit_items
         completed = df["Status"].eq("Completed").sum()
@@ -232,26 +194,34 @@ with st.container():
         col1.metric("Departments", df["Department"].nunique())
         col2.metric("Total Items", total)
         col3.metric("Completed", completed)
-
         st.progress(progress / 100)
         st.caption(f"✅ {progress:.0f}% of audit items completed")
 
         st.dataframe(df, use_container_width=True)
         st.caption("💡 Dashboard updates automatically when uploads are completed.")
 
+        st.subheader("🤖 AI Assistant Insight (Demo)")
+        if progress < 100:
+            st.info("AI suggests: Focus on uploading missing *Safety Certificates* to reach full compliance this week.")
+        else:
+            st.success("AI confirms: All departments are fully compliant! Great job 🎯")
+
+        if st.button("📄 Export Audit Summary (Demo)"):
+            st.success("✅ Audit Summary generated successfully (demo only).")
+
     # LOGIN PAGE
-    elif st.session_state["page"] == "Login":
-        st.header("🔐 Login")
+    elif st.session_state["page"] == "🔐 Login":
+        st.header("🔐 Login (Demo)")
         with st.form("login_form"):
             email = st.text_input("Email")
             password = st.text_input("Password", type="password")
             submitted = st.form_submit_button("Login")
             if submitted:
-                st.success("✅ Logged in (demo only — backend not connected).")
+                st.success("✅ Logged in (demo only — no backend connected).")
 
     # SIGNUP PAGE
-    elif st.session_state["page"] == "SignUp":
-        st.header("🧾 Create an Account")
+    elif st.session_state["page"] == "🧾 SignUp":
+        st.header("🧾 Create an Account (Demo)")
         with st.form("signup_form"):
             name = st.text_input("Full Name")
             email = st.text_input("Email")
@@ -262,6 +232,6 @@ with st.container():
                 if password != confirm:
                     st.error("❌ Passwords do not match.")
                 else:
-                    st.success("✅ Account created (demo only — backend not connected).")
+                    st.success("✅ Account created successfully (demo only).")
 
     st.markdown("</div>", unsafe_allow_html=True)
