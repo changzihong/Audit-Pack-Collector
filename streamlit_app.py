@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Audit Pack Collector", layout="wide")
 
 # ---------------------------
-# SESSION STATE SETUP
+# SESSION STATE
 # ---------------------------
 if "page" not in st.session_state:
     st.session_state["page"] = "Home"
@@ -18,60 +18,70 @@ def go_to(page_name):
 
 
 # ---------------------------
-# NAVIGATION BAR (BUTTON STYLE)
+# NAVIGATION BAR
 # ---------------------------
 def navigation_bar():
     st.markdown(
         """
         <style>
-            div[data-testid="stHorizontalBlock"] {
-                background-color: #0d6efd;
+            .navbar {
+                background-color: white;
                 padding: 0.8rem 1.2rem;
-                border-radius: 8px;
+                border-bottom: 1px solid #e5e5e5;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }
-            .nav-btn {
-                background-color: white;
-                color: #0d6efd;
-                border-radius: 8px;
-                padding: 0.4rem 0.9rem;
-                border: none;
-                font-weight: 500;
-                cursor: pointer;
-            }
-            .nav-btn:hover {
-                background-color: #eaf0ff;
+                position: sticky;
+                top: 0;
+                z-index: 999;
             }
             .nav-title {
-                color: white;
+                color: #0d6efd;
                 font-weight: 700;
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+            }
+            .nav-btn {
+                background: none;
+                color: #0d6efd;
+                border: none;
+                font-weight: 500;
+                font-size: 0.95rem;
+                margin-left: 0.5rem;
+                cursor: pointer;
+                transition: all 0.2s ease-in-out;
+                border-radius: 6px;
+                padding: 0.4rem 0.9rem;
+            }
+            .nav-btn:hover {
+                transform: scale(1.05);
+                background-color: rgba(13, 110, 253, 0.05);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             }
         </style>
+
+        <div class="navbar">
+            <div class="nav-title">📦 Audit Pack Collector</div>
+            <div>
+                <form action="#" method="get" style="display:inline;">
+                    <button class="nav-btn" type="submit" formaction="?page=Home">🏠 Home</button>
+                    <button class="nav-btn" type="submit" formaction="?page=Upload">📁 Upload</button>
+                    <button class="nav-btn" type="submit" formaction="?page=Dashboard">📊 Dashboard</button>
+                    <button class="nav-btn" type="submit" formaction="?page=Login">🔐 Login</button>
+                    <button class="nav-btn" type="submit" formaction="?page=SignUp">🧾 Sign Up</button>
+                </form>
+            </div>
+        </div>
         """,
         unsafe_allow_html=True
     )
 
-    col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 1, 1, 1, 1])
-    with col1:
-        st.markdown('<div class="nav-title">📦 Audit Pack Collector</div>', unsafe_allow_html=True)
-    with col2:
-        if st.button("🏠 Home", key="home_btn", use_container_width=True):
-            go_to("Home")
-    with col3:
-        if st.button("📁 Upload", key="upload_btn", use_container_width=True):
-            go_to("Upload")
-    with col4:
-        if st.button("📊 Dashboard", key="dashboard_btn", use_container_width=True):
-            go_to("Dashboard")
-    with col5:
-        if st.button("🔐 Login", key="login_btn", use_container_width=True):
-            go_to("Login")
-    with col6:
-        if st.button("🧾 Sign Up", key="signup_btn", use_container_width=True):
-            go_to("SignUp")
+
+# ---------------------------
+# URL HANDLING (simulate navigation)
+# ---------------------------
+query_params = st.query_params
+if "page" in query_params:
+    st.session_state["page"] = query_params["page"]
 
 # ---------------------------
 # DUMMY DATA
@@ -88,11 +98,11 @@ if "audit_items" not in st.session_state:
 # RENDER NAVBAR
 # ---------------------------
 navigation_bar()
-st.write("")  # small spacer
+st.write("")
 
 
 # ---------------------------
-# PAGE CONTENT
+# PAGE CONTENTS
 # ---------------------------
 
 # HOME PAGE
@@ -100,17 +110,17 @@ if st.session_state["page"] == "Home":
     st.markdown("## 👋 Welcome to Audit Pack Collector")
     st.write(
         """
-        This platform helps HR and Compliance teams easily track and collect all required audit documents from each department.  
+        A lightweight audit document collection dashboard for HR and Compliance teams.
         
-        **Key Features**
-        - 📋 Centralized checklist  
-        - 📁 File upload & tracking  
-        - 📊 Real-time progress dashboard  
-        - 🔐 Login and role-based access  
+        **Features**
+        - Centralized checklist  
+        - File uploads with status tracking  
+        - Real-time dashboard  
+        - Secure login system (coming soon)
         """
     )
     st.image("https://cdn-icons-png.flaticon.com/512/2991/2991106.png", width=200)
-    st.info("Use the navigation bar above to explore different pages.")
+    st.info("Use the navigation bar to explore other sections.")
 
 
 # UPLOAD PAGE
@@ -130,6 +140,7 @@ elif st.session_state["page"] == "Upload":
         st.session_state.audit_items.loc[idx, "Status"] = "Completed"
         st.session_state.audit_items.loc[idx, "Last Updated"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+
 # DASHBOARD PAGE
 elif st.session_state["page"] == "Dashboard":
     st.header("📊 Audit Dashboard")
@@ -140,7 +151,7 @@ elif st.session_state["page"] == "Dashboard":
     progress = (completed / total) * 100
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Total Departments", df["Department"].nunique())
+    col1.metric("Departments", df["Department"].nunique())
     col2.metric("Total Items", total)
     col3.metric("Completed", completed)
 
@@ -149,7 +160,7 @@ elif st.session_state["page"] == "Dashboard":
 
     st.dataframe(df, use_container_width=True)
     st.divider()
-    st.caption("💡 This dashboard updates automatically when uploads are completed.")
+    st.caption("💡 Dashboard updates automatically when uploads are completed.")
 
 
 # LOGIN PAGE
@@ -162,7 +173,7 @@ elif st.session_state["page"] == "Login":
         submitted = st.form_submit_button("Login")
 
         if submitted:
-            st.success("✅ Logged in (demo only — no backend yet).")
+            st.success("✅ Logged in (demo only — backend not connected).")
 
 
 # SIGN UP PAGE
@@ -180,4 +191,4 @@ elif st.session_state["page"] == "SignUp":
             if password != confirm:
                 st.error("Passwords do not match.")
             else:
-                st.success("✅ Account created! (demo only — no backend yet).")
+                st.success("✅ Account created (demo only — backend not connected).")
